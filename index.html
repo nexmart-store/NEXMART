@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>NEXMART — AI-Powered Store</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#080C18;--bg2:#0F1629;--bg3:#141E35;--cyan:#00C8FF;--gold:#FFB800;--text:#E8F0FE;--muted:#7A8FA6;--border:rgba(0,200,255,0.15);--red:#FF4757}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;overflow-x:hidden}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--cyan);border-radius:3px}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:999;background:rgba(8,12,24,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 20px;height:60px;display:flex;align-items:center;justify-content:space-between}
+.logo{font-family:'Rajdhani',sans-serif;font-size:1.5rem;font-weight:700;color:var(--cyan);letter-spacing:3px;display:flex;align-items:center;gap:6px}
+.logo-pulse{width:7px;height:7px;background:var(--gold);border-radius:50%;animation:blink 1.5s infinite}
+@keyframes blink{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.5)}}
+.nav-r{display:flex;align-items:center;gap:10px}
+.aibadge{background:linear-gradient(135deg,var(--cyan),#0080ff);color:#fff;font-size:.65rem;font-weight:800;padding:3px 10px;border-radius:20px;letter-spacing:1px}
+.cart-btn{background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:7px 14px;border-radius:8px;cursor:pointer;font-size:.82rem;display:flex;align-items:center;gap:6px;transition:.2s}
+.cart-btn:hover{border-color:var(--cyan);color:var(--cyan)}
+.cbadge{background:var(--red);color:#fff;border-radius:50%;width:17px;height:17px;font-size:.65rem;display:flex;align-items:center;justify-content:center;font-weight:800}
+
+/* HERO */
+.hero{min-height:90vh;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;padding:20px}
+canvas{position:absolute;inset:0;z-index:0}
+.hero-inner{position:relative;z-index:1;text-align:center;max-width:700px}
+.hero-pill{display:inline-flex;align-items:center;gap:6px;background:rgba(0,200,255,.07);border:1px solid rgba(0,200,255,.2);border-radius:20px;padding:5px 14px;font-size:.72rem;color:var(--cyan);letter-spacing:1.5px;font-weight:700;margin-bottom:22px}
+h1{font-family:'Rajdhani',sans-serif;font-size:clamp(2.5rem,8vw,5rem);font-weight:700;line-height:1.05;margin-bottom:16px}
+h1 em{font-style:normal;background:linear-gradient(135deg,var(--cyan),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{color:var(--muted);font-size:.95rem;line-height:1.8;margin-bottom:36px;max-width:500px;margin-left:auto;margin-right:auto}
+.sbar{position:relative;max-width:560px;margin:0 auto 30px}
+.sbar input{width:100%;padding:16px 130px 16px 50px;background:var(--bg2);border:1.5px solid var(--border);border-radius:50px;color:var(--text);font-size:.92rem;outline:none;transition:.3s}
+.sbar input:focus{border-color:var(--cyan);box-shadow:0 0 28px rgba(0,200,255,.12)}
+.sbar input::placeholder{color:var(--muted)}
+.sbar-icon{position:absolute;left:18px;top:50%;transform:translateY(-50%);font-size:1rem}
+.sbar-btn{position:absolute;right:6px;top:50%;transform:translateY(-50%);background:linear-gradient(135deg,var(--cyan),#0080ff);border:none;border-radius:40px;color:#fff;padding:8px 18px;font-size:.78rem;font-weight:700;cursor:pointer;transition:.2s}
+.sbar-btn:hover{transform:translateY(-50%) scale(1.05)}
+.stats{display:flex;gap:28px;justify-content:center;flex-wrap:wrap}
+.stat .n{font-family:'Rajdhani',sans-serif;font-size:1.7rem;font-weight:700;color:var(--cyan)}
+.stat .l{font-size:.7rem;color:var(--muted);letter-spacing:1px}
+
+/* FLASH BAR */
+.fbar{background:linear-gradient(135deg,#150800,#201000);border-top:1px solid rgba(255,184,0,.18);border-bottom:1px solid rgba(255,184,0,.18);padding:12px 20px;display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap}
+.flabel{background:var(--gold);color:#000;font-size:.68rem;font-weight:900;padding:3px 9px;border-radius:4px;letter-spacing:1.5px}
+.ftext{color:var(--gold);font-size:.85rem;font-weight:500}
+.cdown{display:flex;gap:6px;align-items:center}
+.cb{background:rgba(255,184,0,.1);border:1px solid rgba(255,184,0,.25);border-radius:5px;padding:3px 9px;text-align:center}
+.cb span{display:block;font-family:'Rajdhani',sans-serif;font-weight:700;color:var(--gold);font-size:1rem;line-height:1}
+.cb small{font-size:.55rem;color:var(--muted)}
+.csep{color:var(--gold);font-weight:800}
+
+/* AI SEARCH RESULT BOX */
+#srbox{display:none;max-width:1200px;margin:0 auto;padding:0 20px 10px}
+#srbox.on{display:block}
+.srhead{font-family:'Rajdhani',sans-serif;font-size:1rem;color:var(--cyan);margin-bottom:14px}
+
+/* PRODUCTS */
+.wrap{max-width:1200px;margin:0 auto;padding:50px 20px}
+.sec-title{font-family:'Rajdhani',sans-serif;font-size:1.7rem;font-weight:700;margin-bottom:24px}
+.sec-title span{color:var(--cyan)}
+.tabs{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;margin-bottom:28px;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{background:var(--bg2);border:1px solid var(--border);border-radius:50px;padding:7px 18px;font-size:.8rem;color:var(--muted);cursor:pointer;white-space:nowrap;transition:.2s;font-weight:500}
+.tab.on,.tab:hover{background:rgba(0,200,255,.1);border-color:var(--cyan);color:var(--cyan)}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:18px}
+.pcard{background:var(--bg2);border:1px solid var(--border);border-radius:16px;overflow:hidden;transition:.3s;position:relative}
+.pcard:hover{transform:translateY(-5px);border-color:rgba(0,200,255,.45);box-shadow:0 14px 44px rgba(0,200,255,.1)}
+.pimg{width:100%;height:190px;display:flex;align-items:center;justify-content:center;font-size:3.8rem;background:var(--bg3);transition:.3s}
+.pcard:hover .pimg{transform:scale(1.05)}
+.pbody{padding:14px}
+.pcat{font-size:.65rem;color:var(--cyan);font-weight:700;letter-spacing:1px;margin-bottom:5px;text-transform:uppercase}
+.pname{font-family:'Rajdhani',sans-serif;font-size:1rem;font-weight:600;margin-bottom:7px;line-height:1.3}
+.pdesc{font-size:.75rem;color:var(--muted);margin-bottom:11px;line-height:1.5;min-height:34px}
+.pfoot{display:flex;align-items:center;justify-content:space-between}
+.pprice{font-family:'Rajdhani',sans-serif;font-size:1.2rem;font-weight:700;color:var(--gold)}
+.pold{font-size:.7rem;color:var(--muted);text-decoration:line-through;margin-left:3px}
+.addbtn{background:linear-gradient(135deg,var(--cyan),#0080ff);border:none;border-radius:7px;color:#fff;padding:7px 13px;font-size:.74rem;font-weight:700;cursor:pointer;transition:.2s}
+.addbtn:hover{transform:scale(1.06);box-shadow:0 4px 14px rgba(0,200,255,.3)}
+.badge{position:absolute;top:10px;left:10px;padding:2px 8px;border-radius:4px;font-size:.63rem;font-weight:900;letter-spacing:.5px}
+.b-hot{background:var(--red);color:#fff}
+.b-new{background:var(--gold);color:#000}
+.b-sale{background:linear-gradient(135deg,var(--cyan),#0080ff);color:#fff}
+.aibtn{position:absolute;top:10px;right:10px;background:rgba(0,200,255,.1);border:1px solid rgba(0,200,255,.25);border-radius:20px;color:var(--cyan);padding:3px 9px;font-size:.63rem;font-weight:700;cursor:pointer;transition:.2s}
+.aibtn:hover{background:rgba(0,200,255,.22)}
+
+/* WHY */
+.why{background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:50px 20px}
+.why-inner{max-width:1200px;margin:0 auto}
+.fgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-top:32px}
+.fcard{background:var(--bg);border:1px solid var(--border);border-radius:14px;padding:24px 20px;transition:.3s}
+.fcard:hover{border-color:rgba(0,200,255,.35);transform:translateY(-3px)}
+.ficon{font-size:1.8rem;margin-bottom:12px}
+.ftitle{font-family:'Rajdhani',sans-serif;font-size:1rem;font-weight:700;margin-bottom:6px}
+.ftext{font-size:.78rem;color:var(--muted);line-height:1.6}
+
+/* TESTIMONIALS */
+.tgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:32px}
+.tcard{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:22px}
+.tstars{color:var(--gold);font-size:.85rem;margin-bottom:10px}
+.ttext{font-size:.82rem;color:var(--muted);line-height:1.7;margin-bottom:14px;font-style:italic}
+.tauthor{display:flex;align-items:center;gap:10px}
+.tavatar{width:38px;height:38px;border-radius:50%;background:var(--bg3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:1.1rem}
+.tname{font-size:.83rem;font-weight:600}
+.tloc{font-size:.7rem;color:var(--muted)}
+
+/* NEWSLETTER */
+.nl{background:linear-gradient(135deg,var(--bg2),var(--bg3));border:1px solid var(--border);border-radius:20px;padding:44px;text-align:center;max-width:1200px;margin:0 auto 50px;position:relative;overflow:hidden}
+.nl::before{content:'';position:absolute;top:-50px;right:-50px;width:180px;height:180px;background:radial-gradient(circle,rgba(0,200,255,.1),transparent);border-radius:50%}
+.nl h2{font-family:'Rajdhani',sans-serif;font-size:1.8rem;margin-bottom:8px}
+.nl p{color:var(--muted);font-size:.88rem;margin-bottom:24px}
+.nlform{display:flex;gap:10px;max-width:420px;margin:0 auto;flex-wrap:wrap}
+.nlform input{flex:1;min-width:190px;padding:11px 18px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:.85rem;outline:none}
+.nlform input:focus{border-color:var(--cyan)}
+.nlform button{background:linear-gradient(135deg,var(--cyan),#0080ff);border:none;border-radius:8px;color:#fff;padding:11px 22px;font-weight:700;font-size:.85rem;cursor:pointer;white-space:nowrap}
+
+/* FOOTER */
+footer{background:var(--bg2);border-top:1px solid var(--border);padding:44px 20px 20px}
+.fgrid2{display:grid;grid-template-columns:2fr 1fr 1fr;gap:36px;max-width:1200px;margin:0 auto 36px}
+@media(max-width:640px){.fgrid2{grid-template-columns:1fr 1fr}}
+.fbrand h3{font-family:'Rajdhani',sans-serif;font-size:1.3rem;color:var(--cyan);margin-bottom:10px;letter-spacing:2px}
+.fbrand p{color:var(--muted);font-size:.78rem;line-height:1.7}
+.fcol h4{font-size:.73rem;color:var(--text);font-weight:700;letter-spacing:1.5px;margin-bottom:14px;text-transform:uppercase}
+.fcol a{display:block;color:var(--muted);font-size:.78rem;margin-bottom:7px;text-decoration:none;transition:.2s}
+.fcol a:hover{color:var(--cyan)}
+.fbot{border-top:1px solid var(--border);padding-top:20px;text-align:center;color:var(--muted);font-size:.72rem;max-width:1200px;margin:0 auto}
+
+/* CART */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:1998;opacity:0;pointer-events:none;transition:.3s;backdrop-filter:blur(4px)}
+.overlay.on{opacity:1;pointer-events:all}
+.cart{position:fixed;right:0;top:0;bottom:0;width:340px;max-width:95vw;background:var(--bg2);border-left:1px solid var(--border);z-index:1999;transform:translateX(100%);transition:.35s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column}
+.cart.on{transform:none}
+.cart-hd{padding:18px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.cart-hd h3{font-family:'Rajdhani',sans-serif;font-size:1.1rem;font-weight:700}
+.xcart{background:none;border:none;color:var(--muted);font-size:1.2rem;cursor:pointer}
+.citems{flex:1;overflow-y:auto;padding:18px 22px}
+.cempty{text-align:center;padding:50px 20px;color:var(--muted)}
+.cempty .big{font-size:2.5rem;display:block;margin-bottom:12px}
+.ci{display:flex;gap:10px;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--border);align-items:center}
+.ci-emoji{font-size:1.8rem;background:var(--bg3);border-radius:8px;width:48px;height:48px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ci-info{flex:1}
+.ci-name{font-size:.83rem;font-weight:600;margin-bottom:3px}
+.ci-price{font-size:.78rem;color:var(--gold);font-weight:700}
+.ci-qty{display:flex;align-items:center;gap:6px;margin-top:5px}
+.qbtn{background:var(--bg3);border:1px solid var(--border);color:var(--text);width:22px;height:22px;border-radius:4px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.85rem}
+.qnum{font-size:.8rem;font-weight:600;min-width:18px;text-align:center}
+.rmbtn{background:none;border:none;color:var(--muted);cursor:pointer;font-size:.95rem;padding:3px}
+.cfoot{padding:18px 22px;border-top:1px solid var(--border)}
+.ctotal{display:flex;justify-content:space-between;margin-bottom:14px;font-size:1rem;font-weight:600}
+.ctotal-n{color:var(--gold);font-family:'Rajdhani',sans-serif;font-size:1.2rem}
+.ckbtn{width:100%;background:linear-gradient(135deg,var(--cyan),#0080ff);border:none;border-radius:10px;color:#fff;padding:13px;font-size:.95rem;font-weight:700;cursor:pointer;transition:.3s}
+.ckbtn:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(0,200,255,.28)}
+
+/* AI CHAT */
+.aichat-btn{position:fixed;bottom:24px;right:24px;width:56px;height:56px;background:linear-gradient(135deg,var(--cyan),#0080ff);border:none;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.4rem;z-index:1500;box-shadow:0 8px 28px rgba(0,200,255,.35);transition:.3s}
+.aichat-btn:hover{transform:scale(1.1)}
+.airing{position:absolute;inset:-5px;border-radius:50%;border:2px solid var(--cyan);opacity:.4;animation:ring 2s infinite}
+@keyframes ring{0%{transform:scale(1);opacity:.4}100%{transform:scale(1.55);opacity:0}}
+.aipanel{position:fixed;bottom:92px;right:24px;width:340px;max-width:calc(100vw - 36px);height:480px;max-height:calc(100vh - 130px);background:var(--bg2);border:1px solid var(--border);border-radius:18px;z-index:1500;display:flex;flex-direction:column;transform:scale(0);transform-origin:bottom right;transition:.3s cubic-bezier(.4,0,.2,1);opacity:0;pointer-events:none;overflow:hidden}
+.aipanel.on{transform:scale(1);opacity:1;pointer-events:all}
+.ai-hd{padding:14px 18px;background:linear-gradient(135deg,rgba(0,200,255,.1),rgba(0,128,255,.07));border-bottom:1px solid var(--border);display:flex;align-items:center;gap:9px}
+.ai-av{width:34px;height:34px;background:linear-gradient(135deg,var(--cyan),#0080ff);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.95rem;flex-shrink:0}
+.ai-hd-name{font-weight:700;font-size:.86rem}
+.ai-hd-status{font-size:.68rem;color:var(--cyan)}
+.ai-msgs{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px}
+.msg{max-width:88%;padding:9px 13px;border-radius:11px;font-size:.79rem;line-height:1.6;animation:fadeup .2s ease}
+@keyframes fadeup{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.msg.bot{background:var(--bg3);border:1px solid var(--border);align-self:flex-start;border-bottom-left-radius:3px}
+.msg.user{background:rgba(0,200,255,.15);border:1px solid rgba(0,200,255,.18);align-self:flex-end;border-bottom-right-radius:3px}
+.ai-inp{display:flex;gap:7px;padding:10px 14px;border-top:1px solid var(--border)}
+.ai-inp input{flex:1;background:var(--bg3);border:1px solid var(--border);border-radius:7px;color:var(--text);padding:8px 12px;font-size:.79rem;outline:none}
+.ai-inp input:focus{border-color:var(--cyan)}
+.ai-send{background:linear-gradient(135deg,var(--cyan),#0080ff);border:none;border-radius:7px;color:#fff;width:33px;height:33px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0}
+
+/* API SETUP inside panel */
+.api-setup{padding:18px;background:rgba(0,200,255,.05);border-bottom:1px solid var(--border)}
+.api-setup p{font-size:.72rem;color:var(--muted);margin-bottom:8px;line-height:1.5}
+.api-setup input{width:100%;padding:7px 11px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:.75rem;outline:none;margin-bottom:6px}
+.api-setup input:focus{border-color:var(--cyan)}
+.api-setup button{width:100%;background:linear-gradient(135deg,var(--cyan),#0080ff);border:none;border-radius:6px;color:#fff;padding:7px;font-size:.75rem;font-weight:700;cursor:pointer}
+.api-link{color:var(--cyan);font-size:.68rem;display:block;text-align:center;margin-top:4px}
+
+/* TOAST */
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--bg2);border:1px solid var(--cyan);border-radius:9px;padding:11px 22px;font-size:.8rem;z-index:3000;opacity:0;transition:.3s;white-space:nowrap;pointer-events:none}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+
+@media(max-width:500px){.pgrid{grid-template-columns:repeat(2,1fr)}.pimg{height:140px;font-size:2.5rem}.pname{font-size:.88rem}}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">N<span class="logo-pulse"></span>XMART</div>
+  <div class="nav-r">
+    <span class="aibadge">AI POWERED</span>
+    <button class="cart-btn" onclick="toggleCart()">🛒 Cart <span class="cbadge" id="cc">0</span></button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <canvas id="cv"></canvas>
+  <div class="hero-inner">
+    <div class="hero-pill">⚡ NEXMART — AI-POWERED DROPSHIPPING STORE</div>
+    <h1>Shop Smarter<br>with <em>AI That Works</em><br>For You</h1>
+    <p class="hero-sub">Fashion · Home & Kitchen · Fitness · Pets · Electronics — all powered by artificial intelligence 24/7.</p>
+    <div class="sbar">
+      <span class="sbar-icon">🔍</span>
+      <input type="text" id="sq" placeholder='Try "yoga mat under $30" or "pet collar"...' onkeydown="if(event.key==='Enter')doSearch()"/>
+      <button class="sbar-btn" onclick="doSearch()">AI Search</button>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="n">20+</div><div class="l">PRODUCTS</div></div>
+      <div class="stat"><div class="n">5</div><div class="l">NICHES</div></div>
+      <div class="stat"><div class="n">4.9★</div><div class="l">RATING</div></div>
+      <div class="stat"><div class="n">24/7</div><div class="l">AI SUPPORT</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- FLASH BAR -->
+<div class="fbar">
+  <span class="flabel">⚡ FLASH SALE</span>
+  <span class="ftext">Up to 70% off — ends in:</span>
+  <div class="cdown">
+    <div class="cb"><span id="ch">00</span><small>HR</small></div><span class="csep">:</span>
+    <div class="cb"><span id="cm">00</span><small>MIN</small></div><span class="csep">:</span>
+    <div class="cb"><span id="cs">00</span><small>SEC</small></div>
+  </div>
+</div>
+
+<!-- SEARCH RESULTS -->
+<div id="srbox"><div class="wrap" style="padding-top:20px;padding-bottom:0"><p class="srhead" id="srhead">🤖 AI Results</p><div class="pgrid" id="srgrid"></div></div></div>
+
+<!-- PRODUCTS -->
+<div class="wrap" id="shop">
+  <div class="sec-title">Our <span>Collections</span></div>
+  <div class="tabs" id="tabs">
+    <div class="tab on" onclick="setTab('all',this)">🌟 All</div>
+    <div class="tab" onclick="setTab('fashion',this)">👗 Fashion</div>
+    <div class="tab" onclick="setTab('home',this)">🏠 Home & Kitchen</div>
+    <div class="tab" onclick="setTab('fitness',this)">💪 Fitness</div>
+    <div class="tab" onclick="setTab('pets',this)">🐾 Pets</div>
+    <div class="tab" onclick="setTab('electronics',this)">⚡ Electronics</div>
+  </div>
+  <div class="pgrid" id="pg"></div>
+</div>
+
+<!-- WHY -->
+<div class="why">
+  <div class="why-inner">
+    <div class="sec-title" style="text-align:center">Why Choose <span>NEXMART?</span></div>
+    <div class="fgrid">
+      <div class="fcard"><div class="ficon">🤖</div><div class="ftitle">AI Shopping Assistant</div><div class="ftext">Ask anything — find products, compare options, get instant answers 24/7.</div></div>
+      <div class="fcard"><div class="ficon">🔍</div><div class="ftitle">Smart AI Search</div><div class="ftext">Natural language search — type what you need in plain English.</div></div>
+      <div class="fcard"><div class="ficon">🚚</div><div class="ftitle">Worldwide Shipping</div><div class="ftext">Fast global delivery with tracking. US orders 10–20 business days.</div></div>
+      <div class="fcard"><div class="ficon">🔒</div><div class="ftitle">Secure Payments</div><div class="ftext">256-bit SSL. Buyer protection on every order, every time.</div></div>
+      <div class="fcard"><div class="ficon">💰</div><div class="ftitle">Best Prices</div><div class="ftext">Direct from top suppliers. No middlemen. Factory prices, premium quality.</div></div>
+      <div class="fcard"><div class="ficon">↩️</div><div class="ftitle">30-Day Returns</div><div class="ftext">Not happy? Easy hassle-free returns within 30 days. No questions.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- TESTIMONIALS -->
+<div class="wrap">
+  <div class="sec-title" style="text-align:center;margin-bottom:0">What <span>Customers Say</span></div>
+  <div class="tgrid">
+    <div class="tcard"><div class="tstars">★★★★★</div><p class="ttext">"The AI assistant helped me find the perfect gift in 2 minutes. This store is from the future!"</p><div class="tauthor"><div class="tavatar">👩</div><div><div class="tname">Sarah M.</div><div class="tloc">New York, USA</div></div></div></div>
+    <div class="tcard"><div class="tstars">★★★★★</div><p class="ttext">"Ordered fitness gear, arrived fast and well-packed. The AI search is incredibly accurate!"</p><div class="tauthor"><div class="tavatar">👨</div><div><div class="tname">James K.</div><div class="tloc">London, UK</div></div></div></div>
+    <div class="tcard"><div class="tstars">★★★★★</div><p class="ttext">"Best shopping experience I've had. The AI chatbot answered every question about my order."</p><div class="tauthor"><div class="tavatar">👩‍🦱</div><div><div class="tname">Priya R.</div><div class="tloc">Toronto, Canada</div></div></div></div>
+  </div>
+</div>
+
+<!-- NEWSLETTER -->
+<div class="nl" style="margin:0 20px 50px;max-width:1160px;margin-left:auto;margin-right:auto">
+  <h2>Get <span style="color:var(--cyan)">AI-Curated</span> Deals Weekly</h2>
+  <p>Our AI picks the best deals and sends them straight to you. Join 50,000+ smart shoppers.</p>
+  <div class="nlform">
+    <input type="email" id="em" placeholder="Your email address"/>
+    <button onclick="subscribe()">Subscribe Free →</button>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="fgrid2">
+    <div class="fbrand"><h3>N⚡XMART</h3><p>AI-powered dropshipping store — Fashion, Home & Kitchen, Fitness, Pets, Electronics. Operated autonomously by AI.</p></div>
+    <div class="fcol"><h4>Shop</h4><a href="#" onclick="setTab('fashion')">Fashion</a><a href="#" onclick="setTab('home')">Home & Kitchen</a><a href="#" onclick="setTab('fitness')">Fitness</a><a href="#" onclick="setTab('pets')">Pets</a><a href="#" onclick="setTab('electronics')">Electronics</a></div>
+    <div class="fcol"><h4>Help</h4><a href="#">Track Order</a><a href="#">Returns</a><a href="#">Shipping Info</a><a href="#">FAQ</a><a href="#">Contact</a></div>
+  </div>
+  <div class="fbot">© 2025 NEXMART. All rights reserved. | AI-Powered by Claude · Tidio · Google Analytics 4</div>
+</footer>
+
+<!-- CART -->
+<div class="overlay" id="ov" onclick="toggleCart()"></div>
+<div class="cart" id="ct">
+  <div class="cart-hd"><h3>🛒 Your Cart</h3><button class="xcart" onclick="toggleCart()">✕</button></div>
+  <div class="citems" id="ci"><div class="cempty"><span class="big">🛒</span><p>Cart is empty</p><p style="font-size:.74rem;color:var(--muted);margin-top:6px">Add products to get started!</p></div></div>
+  <div class="cfoot" id="cf" style="display:none">
+    <div class="ctotal"><span>Total</span><span class="ctotal-n" id="ctot">$0.00</span></div>
+    <button class="ckbtn" onclick="showToast('🔒 Redirecting to checkout...')">🔒 Secure Checkout →</button>
+  </div>
+</div>
+
+<!-- AI CHAT -->
+<button class="aichat-btn" onclick="toggleAI()" title="AI Assistant"><span class="airing"></span>🤖</button>
+<div class="aipanel" id="aip">
+  <div class="ai-hd">
+    <div class="ai-av">🤖</div>
+    <div><div class="ai-hd-name">NEXMART AI</div><div class="ai-hd-status">● Online — ready to help</div></div>
+  </div>
+  <div id="apisetup" class="api-setup">
+    <p>🔑 Add your free Anthropic API key to activate AI features. Get one free at console.anthropic.com</p>
+    <input type="password" id="ak" placeholder="sk-ant-api03-..."/>
+    <button onclick="saveKey()">Activate AI →</button>
+    <a class="api-link" href="https://console.anthropic.com" target="_blank">Get free key →</a>
+  </div>
+  <div class="ai-msgs" id="ams"><div class="msg bot">👋 Hi! I'm your NEXMART AI assistant. Ask me about products, shipping, or anything else!</div></div>
+  <div class="ai-inp">
+    <input type="text" id="ainp" placeholder="Ask me anything..." onkeydown="if(event.key==='Enter')sendMsg()"/>
+    <button class="ai-send" onclick="sendMsg()">➤</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// DATA
+const P=[
+  {id:1,cat:'fashion',name:'Premium Wireless Earbuds',e:'🎧',price:24.99,old:49.99,badge:'hot',desc:'Crystal clear sound, 24hr battery, touch controls.'},
+  {id:2,cat:'fashion',name:'Smart Fitness Watch',e:'⌚',price:34.99,old:79.99,badge:'sale',desc:'Heart rate, steps & sleep tracking. Waterproof.'},
+  {id:3,cat:'fashion',name:'LED Polarized Sunglasses',e:'🕶️',price:18.99,old:39.99,badge:'new',desc:'UV400 protection, lightweight, unisex style.'},
+  {id:4,cat:'fashion',name:'Crossbody Travel Bag',e:'👜',price:22.99,old:44.99,badge:null,desc:'Anti-theft, waterproof, multiple pockets.'},
+  {id:5,cat:'home',name:'Digital Air Fryer 5.5L',e:'🍳',price:49.99,old:99.99,badge:'hot',desc:'8 presets, rapid heating, 80% less oil.'},
+  {id:6,cat:'home',name:'Smart LED Bulb 4-Pack',e:'💡',price:19.99,old:39.99,badge:'sale',desc:'16M colors, voice & app control, E27.'},
+  {id:7,cat:'home',name:'Auto Pour Coffee Maker',e:'☕',price:39.99,old:69.99,badge:null,desc:'12-cup, brew timer, keep-warm plate.'},
+  {id:8,cat:'home',name:'Bamboo Cutting Board Set',e:'🔪',price:27.99,old:49.99,badge:'new',desc:'3-piece, juice groove, non-slip, eco-friendly.'},
+  {id:9,cat:'fitness',name:'Resistance Bands Set (5)',e:'🏋️',price:16.99,old:32.99,badge:'hot',desc:'5 resistance levels, latex-free, door anchor.'},
+  {id:10,cat:'fitness',name:'Extra Thick Yoga Mat',e:'🧘',price:29.99,old:54.99,badge:null,desc:'6mm cushioning, non-slip, carry strap.'},
+  {id:11,cat:'fitness',name:'Speed Jump Rope',e:'🪢',price:12.99,old:24.99,badge:'sale',desc:'Ball bearings, adjustable cable, rep counter.'},
+  {id:12,cat:'fitness',name:'Deep Tissue Foam Roller',e:'🧴',price:21.99,old:39.99,badge:'new',desc:'High-density EVA foam, muscle recovery.'},
+  {id:13,cat:'pets',name:'Auto Pet Feeder 4L',e:'🐾',price:38.99,old:74.99,badge:'hot',desc:'Schedule 4 meals/day, portion control, app.'},
+  {id:14,cat:'pets',name:'LED Safety Pet Collar',e:'🐶',price:14.99,old:27.99,badge:null,desc:'3 flash modes, USB rechargeable, waterproof.'},
+  {id:15,cat:'pets',name:'Pro Pet Grooming Kit',e:'✂️',price:32.99,old:64.99,badge:'sale',desc:'7-piece set, stainless blades, ergonomic.'},
+  {id:16,cat:'pets',name:'Interactive Cat Tunnel',e:'🐱',price:17.99,old:33.99,badge:'new',desc:'3-way tunnel, crinkle sound, washable.'},
+  {id:17,cat:'electronics',name:'Portable Bluetooth Speaker',e:'🔊',price:29.99,old:59.99,badge:'hot',desc:'360° surround, 20hr battery, IPX7.'},
+  {id:18,cat:'electronics',name:'7-in-1 USB-C Hub',e:'🔌',price:27.99,old:54.99,badge:null,desc:'4K HDMI, 100W PD, 3x USB-A, SD reader.'},
+  {id:19,cat:'electronics',name:'Adjustable Laptop Stand',e:'💻',price:22.99,old:42.99,badge:'sale',desc:'6 heights, aluminum, foldable, ventilated.'},
+  {id:20,cat:'electronics',name:'Ring Light Phone Clip',e:'💡',price:15.99,old:29.99,badge:'new',desc:'3 light modes, 10 brightness, 360° rotation.'},
+];
+
+let cart=JSON.parse(localStorage.getItem('nx_cart')||'[]');
+let apiKey=localStorage.getItem('nx_key')||'';
+let aiOpen=false;
+
+window.onload=()=>{render('all');countdown();particles();updateCart();if(apiKey)document.getElementById('apisetup').style.display='none';};
+
+// RENDER
+function render(cat,gridId='pg',list=null){
+  const g=document.getElementById(gridId);
+  const items=list||(cat==='all'?P:P.filter(p=>p.cat===cat));
+  if(!items.length){g.innerHTML='<p style="color:var(--muted);padding:30px;grid-column:1/-1;text-align:center">No products found.</p>';return;}
+  g.innerHTML=items.map(p=>`
+    <div class="pcard">
+      ${p.badge?`<span class="badge b-${p.badge}">${p.badge==='hot'?'🔥 HOT':p.badge==='new'?'✨ NEW':'💰 SALE'}</span>`:''}
+      <button class="aibtn" onclick="aiDescribe(${p.id},event)">🤖 AI Info</button>
+      <div class="pimg">${p.e}</div>
+      <div class="pbody">
+        <div class="pcat">${p.cat}</div>
+        <div class="pname">${p.name}</div>
+        <div class="pdesc" id="d${p.id}">${p.desc}</div>
+        <div class="pfoot">
+          <div><span class="pprice">$${p.price.toFixed(2)}</span> <span class="pold">$${p.old.toFixed(2)}</span></div>
+          <button class="addbtn" onclick="addCart(${p.id})">Add +</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function setTab(cat,el){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  if(el)el.classList.add('on');
+  render(cat);
+  document.getElementById('srbox').classList.remove('on');
+}
+
+// AI SEARCH
+async function doSearch(){
+  const q=document.getElementById('sq').value.trim();
+  if(!q)return;
+  const box=document.getElementById('srbox');
+  const grid=document.getElementById('srgrid');
+  const head=document.getElementById('srhead');
+  box.classList.add('on');
+  grid.innerHTML='<p style="color:var(--muted);grid-column:1/-1;padding:20px">🤖 Searching for "'+q+'"...</p>';
+  head.textContent='🤖 AI Results: "'+q+'"';
+  box.scrollIntoView({behavior:'smooth'});
+  if(!apiKey){
+    const kw=q.toLowerCase();
+    const res=P.filter(p=>p.name.toLowerCase().includes(kw)||p.cat.includes(kw)||p.desc.toLowerCase().includes(kw));
+    render('all','srgrid',res.length?res:P.slice(0,4));
+    head.textContent='Search Results: "'+q+'"';
+    return;
+  }
+  try{
+    const list=P.map(p=>`ID${p.id}:${p.name}|$${p.price}|${p.cat}|${p.desc}`).join('\n');
+    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:100,messages:[{role:'user',content:`Query: "${q}". Return ONLY the IDs of up to 6 relevant products as comma-separated numbers like: 1,5,9\nProducts:\n${list}`}]})});
+    const d=await r.json();
+    const ids=d.content[0].text.match(/\d+/g).map(Number);
+    render('all','srgrid',P.filter(p=>ids.includes(p.id)));
+  }catch(e){
+    const kw=q.toLowerCase();
+    render('all','srgrid',P.filter(p=>p.name.toLowerCase().includes(kw)||p.cat.includes(kw)));
+  }
+}
+
+// AI DESCRIBE
+async function aiDescribe(id,e){
+  e.stopPropagation();
+  const p=P.find(x=>x.id===id);
+  const el=document.getElementById('d'+id);
+  el.textContent='🤖 Writing AI description...';
+  el.style.color='var(--cyan)';
+  if(!apiKey){el.textContent=p.desc;el.style.color='';showToast('Add API key to unlock AI descriptions');return;}
+  try{
+    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:60,messages:[{role:'user',content:`Write a punchy 1-sentence product pitch for "${p.name}" at $${p.price}. Max 15 words. No quotes.`}]})});
+    const d=await r.json();
+    el.textContent=d.content[0].text.trim();
+    el.style.color='';
+  }catch(err){el.textContent=p.desc;el.style.color='';}
+}
+
+// CART
+function addCart(id){
+  const p=P.find(x=>x.id===id);
+  const ex=cart.find(x=>x.id===id);
+  if(ex)ex.qty++;else cart.push({...p,qty:1});
+  saveCart();updateCart();showToast('✅ '+p.name+' added!');
+}
+function removeCart(id){cart=cart.filter(x=>x.id!==id);saveCart();updateCart();}
+function qChange(id,d){const i=cart.find(x=>x.id===id);if(i){i.qty+=d;if(i.qty<=0)removeCart(id);}saveCart();updateCart();}
+function saveCart(){localStorage.setItem('nx_cart',JSON.stringify(cart));}
+function updateCart(){
+  const count=cart.reduce((a,x)=>a+x.qty,0);
+  document.getElementById('cc').textContent=count;
+  const ci=document.getElementById('ci'),cf=document.getElementById('cf');
+  if(!cart.length){ci.innerHTML='<div class="cempty"><span class="big">🛒</span><p>Cart is empty</p></div>';cf.style.display='none';return;}
+  cf.style.display='block';
+  ci.innerHTML=cart.map(p=>`<div class="ci"><div class="ci-emoji">${p.e}</div><div class="ci-info"><div class="ci-name">${p.name}</div><div class="ci-price">$${(p.price*p.qty).toFixed(2)}</div><div class="ci-qty"><button class="qbtn" onclick="qChange(${p.id},-1)">−</button><span class="qnum">${p.qty}</span><button class="qbtn" onclick="qChange(${p.id},1)">+</button></div></div><button class="rmbtn" onclick="removeCart(${p.id})">🗑</button></div>`).join('');
+  document.getElementById('ctot').textContent='$'+cart.reduce((a,x)=>a+(x.price*x.qty),0).toFixed(2);
+}
+function toggleCart(){document.getElementById('ct').classList.toggle('on');document.getElementById('ov').classList.toggle('on');}
+
+// AI CHAT
+function saveKey(){
+  const k=document.getElementById('ak').value.trim();
+  if(!k.startsWith('sk-ant-')){showToast('⚠️ Key must start with sk-ant-');return;}
+  apiKey=k;localStorage.setItem('nx_key',k);
+  document.getElementById('apisetup').style.display='none';
+  appendMsg('🎉 AI activated! Ask me anything about our products!','bot');
+}
+function toggleAI(){aiOpen=!aiOpen;document.getElementById('aip').classList.toggle('on',aiOpen);}
+async function sendMsg(){
+  const inp=document.getElementById('ainp');
+  const q=inp.value.trim();
+  if(!q)return;
+  inp.value='';
+  appendMsg(q,'user');
+  const lm=appendMsg('🤖 Thinking...','bot');
+  if(!apiKey){lm.remove();appendMsg('Please add your API key above to activate me! Get a free key at console.anthropic.com','bot');return;}
+  try{
+    const psum=P.map(p=>`${p.name} $${p.price} (${p.cat})`).join(', ');
+    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:180,system:`You are NEXMART AI assistant. Be helpful, friendly, concise. Products: ${psum}. Shipping: 10-20 days worldwide. Returns: 30 days. Keep replies under 60 words.`,messages:[{role:'user',content:q}]})});
+    const d=await r.json();
+    lm.remove();appendMsg(d.content[0].text,'bot');
+  }catch(e){lm.remove();appendMsg('Error — please try again!','bot');}
+}
+function appendMsg(txt,cls){
+  const d=document.createElement('div');d.className='msg '+cls;d.textContent=txt;
+  const m=document.getElementById('ams');m.appendChild(d);m.scrollTop=m.scrollHeight;return d;
+}
+
+// COUNTDOWN
+function countdown(){
+  let end=localStorage.getItem('nx_end');
+  if(!end||Date.now()>+end){end=Date.now()+12*3600000;localStorage.setItem('nx_end',end);}
+  setInterval(()=>{
+    let d=Math.max(0,+end-Date.now());
+    const h=Math.floor(d/3600000);d%=3600000;
+    const m=Math.floor(d/60000);d%=60000;
+    const s=Math.floor(d/1000);
+    document.getElementById('ch').textContent=String(h).padStart(2,'0');
+    document.getElementById('cm').textContent=String(m).padStart(2,'0');
+    document.getElementById('cs').textContent=String(s).padStart(2,'0');
+  },1000);
+}
+
+// NEWSLETTER
+function subscribe(){
+  const e=document.getElementById('em').value.trim();
+  if(!e||!e.includes('@')){showToast('⚠️ Enter a valid email');return;}
+  document.getElementById('em').value='';showToast('🎉 Subscribed! Deals coming your way!');
+}
+
+// TOAST
+function showToast(msg){
+  const t=document.getElementById('toast');t.textContent=msg;t.classList.add('on');
+  setTimeout(()=>t.classList.remove('on'),3000);
+}
+
+// PARTICLES
+function particles(){
+  const c=document.getElementById('cv'),ctx=c.getContext('2d');
+  let W,H,pts=[];
+  function resize(){W=c.width=window.innerWidth;H=c.height=c.parentElement.offsetHeight;
+    pts=Array.from({length:60},()=>({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.35,vy:(Math.random()-.5)*.35,r:Math.random()*1.8+.4}));}
+  window.addEventListener('resize',resize);resize();
+  let mx=W/2,my=H/2;c.addEventListener('mousemove',e=>{mx=e.offsetX;my=e.offsetY;});
+  (function draw(){
+    ctx.clearRect(0,0,W,H);
+    pts.forEach(p=>{
+      p.x+=p.vx;p.y+=p.vy;
+      if(p.x<0||p.x>W)p.vx*=-1;if(p.y<0||p.y>H)p.vy*=-1;
+      ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle='rgba(0,200,255,.55)';ctx.fill();
+    });
+    for(let i=0;i<pts.length;i++)for(let j=i+1;j<pts.length;j++){
+      const dist=Math.hypot(pts[i].x-pts[j].x,pts[i].y-pts[j].y);
+      if(dist<110){ctx.beginPath();ctx.moveTo(pts[i].x,pts[i].y);ctx.lineTo(pts[j].x,pts[j].y);ctx.strokeStyle=`rgba(0,200,255,${.14*(1-dist/110)})`;ctx.lineWidth=.5;ctx.stroke();}
+    }
+    pts.forEach(p=>{
+      const d=Math.hypot(p.x-mx,p.y-my);
+      if(d<140){ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(mx,my);ctx.strokeStyle=`rgba(255,184,0,${.09*(1-d/140)})`;ctx.lineWidth=.4;ctx.stroke();}
+    });
+    requestAnimationFrame(draw);
+  })();
+}
+</script>
+</body>
+</html>
