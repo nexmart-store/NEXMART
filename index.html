@@ -374,7 +374,7 @@ function render(cat,gridId='pg',list=null){
     <div class="pcard">
       ${p.badge?`<span class="badge b-${p.badge}">${p.badge==='hot'?'🔥 HOT':p.badge==='new'?'✨ NEW':'💰 SALE'}</span>`:''}
       <button class="aibtn" onclick="aiDescribe(${p.id},event)">🤖 AI Info</button>
-      <div class="pimg">${p.e}</div>
+      <div class="pimg">${p.img?`<img src="${p.img}" style="width:100%;height:100%;object-fit:cover;border-radius:inherit">`:p.e}</div>
       <div class="pbody">
         <div class="pcat">${p.cat}</div>
         <div class="pname">${p.name}</div>
