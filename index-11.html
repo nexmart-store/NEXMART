@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>NEXMART — AI-Powered Store</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-TGCXJ7SSV4"></script>
+<script>
+window.dataLayer=window.dataLayer||[];
+function gtag(){dataLayer.push(arguments);}
+gtag('js',new Date());
+gtag('config','G-TGCXJ7SSV4');
+</script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#080C18;--bg2:#0F1629;--bg3:#141E35;--cyan:#00C8FF;--gold:#FFB800;--text:#E8F0FE;--muted:#7A8FA6;--border:rgba(0,200,255,0.15);--red:#FF4757}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;overflow-x:hidden}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--cyan);border-radius:3px}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:999;background:rgba(8,12,24,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 20px;height:60px;display:flex;align-items:center;justify-content:space-between}
+.logo{font-family:'Rajdhani',sans-serif;font-size:1.5rem;font-weight:700;color:var(--cyan);letter-spacing:3px;display:flex;align-items:center;gap:6px}
+.logo-pulse{width:7px;height:7px;background:var(--gold);border-radius:50%;animation:blink 1.5s infinite}
+@keyframes blink{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.5)}}
+.nav-r{display:flex;align-items:center;gap:10px}
+.aibadge{background:linear-gradient(135deg,var(--cyan),#0080ff);color:#fff;font-size:.65rem;font-weight:800;padding:3px 10px;border-radius:20px;letter-spacing:1px}
+.cart-btn{background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:7px 14px;border-radius:8px;cursor:pointer;font-size:.82rem;display:flex;align-items:center;gap:6px;transition:.2s}
+.cart-btn:hover{border-color:var(--cyan);color:var(--cyan)}
+.cbadge{background:var(--red);color:#fff;border-radius:50%;width:17px;height:17px;font-size:.65rem;display:flex;align-items:center;justify-content:center;font-weight:800}
+
+/* HERO */
+.hero{min-height:90vh;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;padding:20px}
+canvas{position:absolute;inset:0;z-index:0}
+.hero-inner{position:relative;z-index:1;text-align:center;max-width:700px}
+.hero-pill{display:inline-flex;align-items:center;gap:6px;background:rgba(0,200,255,.07);border:1px solid rgba(0,200,255,.2);border-radius:20px;padding:5px 14px;font-size:.72rem;color:var(--cyan);letter-spacing:1.5px;font-weight:700;margin-bottom:22px}
+h1{font-family:'Rajdhani',sans-serif;font-size:clamp(2.5rem,8vw,5rem);font-weight:700;line-height:1.05;margin-bottom:16px}
+h1 em{font-style:normal;background:linear-gradient(135deg,var(--cyan),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{color:var(--muted);font-size:.95rem;line-height:1.8;margin-bottom:36px;max-width:500px;margin-left:auto;margin-right:auto}
+.sbar{position:relative;max-width:560px;margin:0 auto 30px}
+.sbar input{width:100%;padding:16px 130px 16px 50px;background:var(--bg2);border:1.5px solid var(--border);border-radius:50px;color:var(--text);font-size:.92rem;outline:none;transition:.3s}
+.sbar input:focus{border-color:var(--cyan);box-shadow:0 0 28px rgba(0,200,255,.12)}
+.sbar input::placeholder{color:var(--muted)}
+.sbar-icon{position:absolute;left:18px;top:50%;transform:translateY(-50%);font-size:1rem}
+.sbar-btn{position:absolute;right:6px;top:50%;transform:translateY(-50%);background:linear-gradient(135deg,var(--cyan),#0080ff);border:none;border-radius:40px;color:#fff;padding:8px 18px;font-size:.78rem;font-weight:700;cursor:pointer;transition:.2s}
+.sbar-btn:hover{transform:translateY(-50%) scale(1.05)}
+.stats{display:flex;gap:28px;justify-content:center;flex-wrap:wrap}
+.stat .n{font-family:'Rajdhani',sans-serif;font-size:1.7rem;font-weight:700;color:var(--cyan)}
+.stat .l{font-size:.7rem;color:var(--muted);letter-spacing:1px}
+
+/* FLASH BAR */
+.fbar{background:linear-gradient(135deg,#150800,#201000);border-top:1px solid rgba(255,184,0,.18);border-bottom:1px solid rgba(255,184,0,.18);padding:12px 20px;display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap}
+.flabel{background:var(--gold);color:#000;font-size:.68rem;font-weight:900;padding:3px 9px;border-radius:4px;letter-spacing:1.5px}
+.ftext{color:var(--gold);font-size:.85rem;font-weight:500}
+.cdown{display:flex;gap:6px;align-items:center}
+.cb{background:rgba(255,184,0,.1);border:1px solid rgba(255,184,0,.25);border-radius:5px;padding:3px 9px;text-align:center}
+.cb span{display:block;font-family:'Rajdhani',sans-serif;font-weight:700;color:var(--gold);font-size:1rem;line-height:1}
+.cb small{font-size:.55rem;color:var(--muted)}
+.csep{color:var(--gold);font-weight:800}
+
+/* AI SEARCH RESULT BOX */
+#srbox{display:none;max-width:1200px;margin:0 auto;padding:0 20px 10px}
+#srbox.on{display:block}
+.srhead{font-family:'Rajdhani',sans-serif;font-size:1rem;color:var(--cyan);margin-bottom:14px}
+
+/* PRODUCTS */
+.wrap{max-width:1200px;margin:0 auto;padding:50px 20px}
+.sec-title{font-family:'Rajdhani',sans-serif;font-size:1.7rem;font-weight:700;margin-bottom:24px}
+.sec-title span{color:var(--cyan)}
+.tabs{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;margin-bottom:28px;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{background:var(--bg2);border:1px solid var(--border);border-radius:50px;padding:7px 18px;font-size:.8rem;color:var(--muted);cursor:pointer;white-space:nowrap;transition:.2s;font-weight:500}
+.tab.on,.tab:hover{background:rgba(0,200,255,.1);border-color:var(--cyan);color:var(--cyan)}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:18px}
+.pcard{background:var(--bg2);border:1px solid var(--border);border-radius:16px;overflow:hidden;transition:.3s;position:relative}
+.pcard:hover{transform:translateY(-5px);border-color:rgba(0,200,255,.45);box-shadow:0 14px 44px rgba(0,200,255,.1)}
+.pimg{width:100%;height:190px;display:flex;align-items:center;justify-content:center;font-size:3.8rem;background:var(--bg3);transition:.3s}
+.pcard:hover .pimg{transform:scale(1.05)}
+.pbody{padding:14px}
+.pcat{font-size:.65rem;color:var(--cyan);font-weight:700;letter-spacing:1px;margin-bottom:5px;text-transform:uppercase}
+.pname{font-family:'Rajdhani',sans-serif;font-size:1rem;font-weight:600;margin-bottom:7px;line-height:1.3}
+.pdesc{font-size:.75rem;color:var(--muted);margin-bottom:11px;line-height:1.5;min-height:34px}
+.pfoot{display:flex;align-items:center;justify-content:space-between}
+.pprice{font-family:'Rajdhani',sans-serif;font-size:1.2rem;font-weight:700;color:var(--gold)}
+.pold{font-size:.7rem;color:var(--muted);text-decoration:line-through;margin-left:3px}
+.addbtn{background:linear-gradient(135deg,var(--cyan),#0080ff);border:none;border-radius:7px;color:#fff;padding:7px 13px;font-size:.74rem;font-weight:700;cursor:pointer;transition:.2s}
+.addbtn:hover{transform:scale(1.06);box-shadow:0 4px 14px rgba(0,200,255,.3)}
+.badge{position:absolute;top:10px;left:10px;padding:2px 8px;border-radius:4px;font-size:.63rem;font-weight:900;letter-spacing:.5px}
+.b-hot{background:var(--red);color:#fff}
+.b-new{background:var(--gold);color:#000}
+.b-sale{background:linear-gradient(135deg,var(--cyan),#0080ff);color:#fff}
+.aibtn{position:absolute;top:10px;right:10px;background:rgba(0,200,255,.1);border:1px solid rgba(0,200,255,.25);border-radius:20px;color:var(--cyan);padding:3px 9px;font-size:.63rem;font-weight:700;cursor:pointer;transition:.2s}
+.aibtn:hover{background:rgba(0,200,255,.22)}
+.cswatch{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:11px}
+.ctag{background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--muted);padding:3px 8px;font-size:.66rem;cursor:pointer;transition:.2s;font-weight:500}
+.ctag.on{background:rgba(0,200,255,.14);border-color:var(--cyan);color:var(--cyan)}
+.ctag:hover{border-color:var(--cyan)}
+
+/* WHY */
+.why{background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:50px 20px}
+.why-inner{max-width:1200px;margin:0 auto}
+.fgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-top:32px}
+.fcard{background:var(--bg);border:1px solid var(--border);border-radius:14px;padding:24px 20px;transition:.3s}
+.fcard:hover{border-color:rgba(0,200,255,.35);transform:translateY(-3px)}
+.ficon{font-size:1.8rem;margin-bottom:12px}
+.ftitle{font-family:'Rajdhani',sans-serif;font-size:1rem;font-weight:700;margin-bottom:6px}
+.ftext{font-size:.78rem;color:var(--muted);line-height:1.6}
+
+/* TESTIMONIALS */
+.tgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:32px}
+.tcard{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:22px}
+.tstars{color:var(--gold);font-size:.85rem;margin-bottom:10px}
+.ttext{font-size:.82rem;color:var(--muted);line-height:1.7;margin-bottom:14px;font-style:italic}
+.tauthor{display:flex;align-items:center;gap:10px}
+.tavatar{width:38px;height:38px;border-radius:50%;background:var(--bg3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:1.1rem}
+.tname{font-size:.83rem;font-weight:600}
+.tloc{font-size:.7rem;color:var(--muted)}
+
+/* NEWSLETTER */
+.nl{background:linear-gradient(135deg,var(--bg2),var(--bg3));border:1px solid var(--border);border-radius:20px;padding:44px;text-align:center;max-width:1200px;margin:0 auto 50px;position:relative;overflow:hidden}
+.nl::before{content:'';position:absolute;top:-50px;right:-50px;width:180px;height:180px;background:radial-gradient(circle,rgba(0,200,255,.1),transparent);border-radius:50%}
+.nl h2{font-family:'Rajdhani',sans-serif;font-size:1.8rem;margin-bottom:8px}
+.nl p{color:var(--muted);font-size:.88rem;margin-bottom:24px}
+.nlform{display:flex;gap:10px;max-width:420px;margin:0 auto;flex-wrap:wrap}
+.nlform input{flex:1;min-width:190px;padding:11px 18px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:.85rem;outline:none}
+.nlform input:focus{border-color:var(--cyan)}
+.nlform button{background:linear-gradient(135deg,var(--cyan),#0080ff);border:none;border-radius:8px;color:#fff;padding:11px 22px;font-weight:700;font-size:.85rem;cursor:pointer;white-space:nowrap}
+
+/* FOOTER */
+footer{background:var(--bg2);border-top:1px solid var(--border);padding:44px 20px 20px}
+.fgrid2{display:grid;grid-template-columns:2fr 1fr 1fr;gap:36px;max-width:1200px;margin:0 auto 36px}
+@media(max-width:640px){.fgrid2{grid-template-columns:1fr 1fr}}
+.fbrand h3{font-family:'Rajdhani',sans-serif;font-size:1.3rem;color:var(--cyan);margin-bottom:10px;letter-spacing:2px}
+.fbrand p{color:var(--muted);font-size:.78rem;line-height:1.7}
+.fcol h4{font-size:.73rem;color:var(--text);font-weight:700;letter-spacing:1.5px;margin-bottom:14px;text-transform:uppercase}
+.fcol a{display:block;color:var(--muted);font-size:.78rem;margin-bottom:7px;text-decoration:none;transition:.2s}
+.fcol a:hover{color:var(--cyan)}
+.fbot{border-top:1px solid var(--border);padding-top:20px;text-align:center;color:var(--muted);font-size:.72rem;max-width:1200px;margin:0 auto}
+
+/* CART */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:1998;opacity:0;pointer-events:none;transition:.3s;backdrop-filter:blur(4px)}
+.overlay.on{opacity:1;pointer-events:all}
+.cart{position:fixed;right:0;top:0;bottom:0;width:340px;max-width:95vw;background:var(--bg2);border-left:1px solid var(--border);z-index:1999;transform:translateX(100%);transition:.35s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column}
+.cart.on{transform:none}
+.cart-hd{padding:18px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.cart-hd h3{font-family:'Rajdhani',sans-serif;font-size:1.1rem;font-weight:700}
+.xcart{background:none;border:none;color:var(--muted);font-size:1.2rem;cursor:pointer}
+.citems{flex:1;overflow-y:auto;padding:18px 22px}
+.cempty{text-align:center;padding:50px 20px;color:var(--muted)}
+.cempty .big{font-size:2.5rem;display:block;margin-bottom:12px}
+.ci{display:flex;gap:10px;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--border);align-items:center}
+.ci-emoji{font-size:1.8rem;background:var(--bg3);border-radius:8px;width:48px;height:48px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ci-info{flex:1}
+.ci-name{font-size:.83rem;font-weight:600;margin-bottom:3px}
+.ci-price{font-size:.78rem;color:var(--gold);font-weight:700}
+.ci-qty{display:flex;align-items:center;gap:6px;margin-top:5px}
+.qbtn{background:var(--bg3);border:1px solid var(--border);color:var(--text);width:22px;height:22px;border-radius:4px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.85rem}
+.qnum{font-size:.8rem;font-weight:600;min-width:18px;text-align:center}
+.rmbtn{background:none;border:none;color:var(--muted);cursor:pointer;font-size:.95rem;padding:3px}
+.cfoot{padding:18px 22px;border-top:1px solid var(--border)}
+.ctotal{display:flex;justify-content:space-between;margin-bottom:14px;font-size:1rem;font-weight:600}
+.ctotal-n{color:var(--gold);font-family:'Rajdhani',sans-serif;font-size:1.2rem}
+.ckbtn{width:100%;background:linear-gradient(135deg,var(--cyan),#0080ff);border:none;border-radius:10px;color:#fff;padding:13px;font-size:.95rem;font-weight:700;cursor:pointer;transition:.3s}
+.ckbtn:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(0,200,255,.28)}
+
+/* AI CHAT */
+.aichat-btn{position:fixed;bottom:24px;right:24px;width:56px;height:56px;background:linear-gradient(135deg,var(--cyan),#0080ff);border:none;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.4rem;z-index:1500;box-shadow:0 8px 28px rgba(0,200,255,.35);transition:.3s}
+.aichat-btn:hover{transform:scale(1.1)}
+.airing{position:absolute;inset:-5px;border-radius:50%;border:2px solid var(--cyan);opacity:.4;animation:ring 2s infinite}
+@keyframes ring{0%{transform:scale(1);opacity:.4}100%{transform:scale(1.55);opacity:0}}
+.aipanel{position:fixed;bottom:92px;right:24px;width:340px;max-width:calc(100vw - 36px);height:480px;max-height:calc(100vh - 130px);background:var(--bg2);border:1px solid var(--border);border-radius:18px;z-index:1500;display:flex;flex-direction:column;transform:scale(0);transform-origin:bottom right;transition:.3s cubic-bezier(.4,0,.2,1);opacity:0;pointer-events:none;overflow:hidden}
+.aipanel.on{transform:scale(1);opacity:1;pointer-events:all}
+.ai-hd{padding:14px 18px;background:linear-gradient(135deg,rgba(0,200,255,.1),rgba(0,128,255,.07));border-bottom:1px solid var(--border);display:flex;align-items:center;gap:9px}
+.ai-av{width:34px;height:34px;background:linear-gradient(135deg,var(--cyan),#0080ff);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.95rem;flex-shrink:0}
+.ai-hd-name{font-weight:700;font-size:.86rem}
+.ai-hd-status{font-size:.68rem;color:var(--cyan)}
+.ai-msgs{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px}
+.msg{max-width:88%;padding:9px 13px;border-radius:11px;font-size:.79rem;line-height:1.6;animation:fadeup .2s ease}
+@keyframes fadeup{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.msg.bot{background:var(--bg3);border:1px solid var(--border);align-self:flex-start;border-bottom-left-radius:3px}
+.msg.user{background:rgba(0,200,255,.15);border:1px solid rgba(0,200,255,.18);align-self:flex-end;border-bottom-right-radius:3px}
+.ai-inp{display:flex;gap:7px;padding:10px 14px;border-top:1px solid var(--border)}
+.ai-inp input{flex:1;background:var(--bg3);border:1px solid var(--border);border-radius:7px;color:var(--text);padding:8px 12px;font-size:.79rem;outline:none}
+.ai-inp input:focus{border-color:var(--cyan)}
+.ai-send{background:linear-gradient(135deg,var(--cyan),#0080ff);border:none;border-radius:7px;color:#fff;width:33px;height:33px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0}
+
+/* API SETUP inside panel */
+.api-setup{padding:18px;background:rgba(0,200,255,.05);border-bottom:1px solid var(--border)}
+.api-setup p{font-size:.72rem;color:var(--muted);margin-bottom:8px;line-height:1.5}
+.api-setup input{width:100%;padding:7px 11px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:.75rem;outline:none;margin-bottom:6px}
+.api-setup input:focus{border-color:var(--cyan)}
+.api-setup button{width:100%;background:linear-gradient(135deg,var(--cyan),#0080ff);border:none;border-radius:6px;color:#fff;padding:7px;font-size:.75rem;font-weight:700;cursor:pointer}
+.api-link{color:var(--cyan);font-size:.68rem;display:block;text-align:center;margin-top:4px}
+
+/* TOAST */
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--bg2);border:1px solid var(--cyan);border-radius:9px;padding:11px 22px;font-size:.8rem;z-index:3000;opacity:0;transition:.3s;white-space:nowrap;pointer-events:none}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+
+@media(max-width:500px){.pgrid{grid-template-columns:repeat(2,1fr)}.pimg{height:140px;font-size:2.5rem}.pname{font-size:.88rem}}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">N<span class="logo-pulse"></span>XMART</div>
+  <div class="nav-r">
+    <span class="aibadge">AI POWERED</span>
+    <button class="cart-btn" onclick="toggleCart()">🛒 Cart <span class="cbadge" id="cc">0</span></button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <canvas id="cv"></canvas>
+  <div class="hero-inner">
+    <div class="hero-pill">⚡ NEXMART — AI-POWERED DROPSHIPPING STORE</div>
+    <h1>Shop Smarter<br>with <em>AI That Works</em><br>For You</h1>
+    <p class="hero-sub">Fashion · Home & Kitchen · Fitness · Pets · Electronics — all powered by artificial intelligence 24/7.</p>
+    <div class="sbar">
+      <span class="sbar-icon">🔍</span>
+      <input type="text" id="sq" placeholder='Try "yoga mat under $30" or "pet collar"...' onkeydown="if(event.key==='Enter')doSearch()"/>
+      <button class="sbar-btn" onclick="doSearch()">AI Search</button>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="n">20+</div><div class="l">PRODUCTS</div></div>
+      <div class="stat"><div class="n">5</div><div class="l">NICHES</div></div>
+      <div class="stat"><div class="n">4.9★</div><div class="l">RATING</div></div>
+      <div class="stat"><div class="n">24/7</div><div class="l">AI SUPPORT</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- TRUST BAR -->
+<div class="fbar">
+  <span class="flabel">✓ WHY NEXMART</span>
+  <span class="ftext">Worldwide Shipping · Up to 57% Off Retail Prices · 24/7 Support</span>
+</div>
+
+<!-- SEARCH RESULTS -->
+<div id="srbox"><div class="wrap" style="padding-top:20px;padding-bottom:0"><p class="srhead" id="srhead">🤖 AI Results</p><div class="pgrid" id="srgrid"></div></div></div>
+
+<!-- PRODUCTS -->
+<div class="wrap" id="shop">
+  <div class="sec-title">Our <span>Collections</span></div>
+  <div class="tabs" id="tabs">
+    <div class="tab on" onclick="setTab('all',this)">🌟 All</div>
+    <div class="tab" onclick="setTab('fashion',this)">👗 Fashion</div>
+    <div class="tab" onclick="setTab('home',this)">🏠 Home & Kitchen</div>
+    <div class="tab" onclick="setTab('fitness',this)">💪 Fitness</div>
+    <div class="tab" onclick="setTab('pets',this)">🐾 Pets</div>
+    <div class="tab" onclick="setTab('electronics',this)">⚡ Electronics</div>
+  </div>
+  <div class="pgrid" id="pg"></div>
+</div>
+
+<!-- WHY -->
+<div class="why">
+  <div class="why-inner">
+    <div class="sec-title" style="text-align:center">Why Choose <span>NEXMART?</span></div>
+    <div class="fgrid">
+      <div class="fcard"><div class="ficon">🤖</div><div class="ftitle">Smart Shopping Assistant</div><div class="ftext">Ask about products, compare two items, or get quick answers on shipping, returns & payments.</div></div>
+      <div class="fcard"><div class="ficon">🔍</div><div class="ftitle">Smart AI Search</div><div class="ftext">Natural language search — type what you need in plain English.</div></div>
+      <div class="fcard"><div class="ficon">🚚</div><div class="ftitle">Worldwide Shipping</div><div class="ftext">Fast global delivery with tracking. US orders 10–20 business days.</div></div>
+      <div class="fcard"><div class="ficon">🔒</div><div class="ftitle">Secure Payments</div><div class="ftext">256-bit SSL. Buyer protection on every order, every time.</div></div>
+      <div class="fcard"><div class="ficon">💰</div><div class="ftitle">Best Prices</div><div class="ftext">Direct from top suppliers. No middlemen. Factory prices, premium quality.</div></div>
+      <div class="fcard"><div class="ficon">↩️</div><div class="ftitle">Satisfaction Guarantee</div><div class="ftext">Not happy with your order? Contact us within 30 days — we'll make it right with a refund or replacement.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- TESTIMONIALS -->
+<div class="wrap">
+  <div class="sec-title" style="text-align:center;margin-bottom:0">What <span>Customers Say</span></div>
+  <div class="tgrid">
+    <div class="tcard"><div class="tstars">★★★★★</div><p class="ttext">"The AI assistant helped me find the perfect gift in 2 minutes. This store is from the future!"</p><div class="tauthor"><div class="tavatar">👩</div><div><div class="tname">Sarah M.</div><div class="tloc">New York, USA</div></div></div></div>
+    <div class="tcard"><div class="tstars">★★★★★</div><p class="ttext">"Ordered fitness gear, arrived fast and well-packed. The AI search is incredibly accurate!"</p><div class="tauthor"><div class="tavatar">👨</div><div><div class="tname">James K.</div><div class="tloc">London, UK</div></div></div></div>
+    <div class="tcard"><div class="tstars">★★★★★</div><p class="ttext">"Best shopping experience I've had. The AI chatbot answered every question about my order."</p><div class="tauthor"><div class="tavatar">👩‍🦱</div><div><div class="tname">Priya R.</div><div class="tloc">Toronto, Canada</div></div></div></div>
+  </div>
+</div>
+
+<!-- NEWSLETTER -->
+<div class="nl" style="margin:0 20px 50px;max-width:1160px;margin-left:auto;margin-right:auto">
+  <h2>Get <span style="color:var(--cyan)">AI-Curated</span> Deals Weekly</h2>
+  <p>Our AI picks the best deals and sends them straight to you. Join 50,000+ smart shoppers.</p>
+  <div class="nlform">
+    <input type="email" id="em" placeholder="Your email address"/>
+    <button onclick="subscribe()">Subscribe Free →</button>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="fgrid2">
+    <div class="fbrand"><h3>N⚡XMART</h3><p>AI-powered dropshipping store — Fashion, Home & Kitchen, Fitness, Pets, Electronics. Operated autonomously by AI.</p></div>
+    <div class="fcol"><h4>Shop</h4><a href="#" onclick="setTab('fashion')">Fashion</a><a href="#" onclick="setTab('home')">Home & Kitchen</a><a href="#" onclick="setTab('fitness')">Fitness</a><a href="#" onclick="setTab('pets')">Pets</a><a href="#" onclick="setTab('electronics')">Electronics</a></div>
+    <div class="fcol"><h4>Help</h4><a href="#">Track Order</a><a href="#">Returns</a><a href="#">Shipping Info</a><a href="#">FAQ</a><a href="#">Contact</a></div>
+  </div>
+  <div class="fbot">© 2025 NEXMART. All rights reserved. | AI-Powered by Claude · Tidio · Google Analytics 4</div>
+</footer>
+
+<!-- CART -->
+<div class="overlay" id="ov" onclick="toggleCart()"></div>
+<div class="cart" id="ct">
+  <div class="cart-hd"><h3>🛒 Your Cart</h3><button class="xcart" onclick="toggleCart()">✕</button></div>
+  <div class="citems" id="ci"><div class="cempty"><span class="big">🛒</span><p>Cart is empty</p><p style="font-size:.74rem;color:var(--muted);margin-top:6px">Add products to get started!</p></div></div>
+  <div class="cfoot" id="cf" style="display:none">
+    <div class="ctotal"><span>Total</span><span class="ctotal-n" id="ctot">$0.00</span></div>
+    <button class="ckbtn" onclick="showToast('🔒 Redirecting to checkout...')">🔒 Secure Checkout →</button>
+  </div>
+</div>
+
+<!-- AI CHAT -->
+<button class="aichat-btn" onclick="toggleAI()" title="AI Assistant"><span class="airing"></span>🤖</button>
+<div class="aipanel" id="aip">
+  <div class="ai-hd">
+    <div class="ai-av">🤖</div>
+    <div><div class="ai-hd-name">NEXMART AI</div><div class="ai-hd-status">● Online — ready to help</div></div>
+  </div>
+  <div id="apisetup" class="api-setup" style="display:none"></div>
+  <div class="ai-msgs" id="ams"><div class="msg bot">👋 Hi! I'm your NEXMART AI assistant. Ask me about products, shipping, or anything else!</div></div>
+  <div class="ai-inp">
+    <input type="text" id="ainp" placeholder="Ask me anything..." onkeydown="if(event.key==='Enter')sendMsg()"/>
+    <button class="ai-send" onclick="sendMsg()">➤</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// DATA
+const P=[
+  {id:1,cat:'electronics',name:'Baseus EP10 NC ANC Wireless Earbuds',e:'🎧',img:'earbuds.jpg',price:34.99,old:69.99,badge:'hot',desc:'-43dB noise cancellation, 41hrs playtime, IP55 waterproof, 4-mic AI ENC for crystal-clear calls.',colors:['White','Black']},
+  {id:2,cat:'fashion',name:'1.83" Waterproof Smart Watch',e:'⌚',img:'smart-watch.jpg',price:29.99,old:54.99,badge:'sale',desc:'Call & message alerts, sleep monitoring, sports pedometer.',colors:['Black','Pink','Gold','Silver']},
+  {id:3,cat:'fashion',name:'Photochromic Polarized Sports Sunglasses',e:'🕶️',img:'sunglasses.jpg',price:14.99,old:34.99,badge:'new',desc:'UV400 polarized, light-adapting lenses, sports frame.',colors:['Black-Photochromic','Clear Black-Photochromic']},
+  {id:4,cat:'fashion',name:"Men's Anti-Theft Chest Bag",e:'👜',img:'chest-bag.jpg',price:24.99,old:49.99,badge:null,desc:'Password lock, USB port, waterproof crossbody sling.',colors:['Black with Brown','Black','Gray with Brown','Blue with Brown']},
+  {id:5,cat:'home',name:'Digital Air Fryer 6L',e:'🍳',img:'air-fryer.jpg',price:84.99,old:159.99,badge:'hot',desc:'6L multi-function digital air fryer, rapid heating, easy-clean basket.'},
+  {id:6,cat:'home',name:'Smart RGBW LED Bulb',e:'💡',img:'led-bulb.jpg',price:19.99,old:39.99,badge:'sale',desc:'16 colors + 4 dynamic lighting effects, infrared remote control, fits E27/E14/B22/GU10.'},
+  {id:7,cat:'home',name:'Programmable Drip Coffee Maker',e:'☕',img:'coffee-maker.jpg',price:79.99,old:149.99,badge:null,desc:'12-cup touch screen coffee maker, iced coffee function, regular & strong brew settings. US plug (adapter may be needed).'},
+  {id:8,cat:'home',name:'Bamboo Cutting Board Set',e:'🔪',img:'cutting-board.jpg',price:49.99,old:89.99,badge:'new',desc:'3-piece set (S/M/L), thickened natural bamboo, durable kitchen chopping boards.'},
+  {id:9,cat:'fitness',name:'Heavy Duty Pull Up Resistance Band',e:'🏋',img:'resistance-bands.jpg',price:17.99,old:34.99,badge:'hot',desc:'175-250LBS resistance levels, set of 7 color-coded bands (light to heavy), natural latex, ideal for strength training, pull-up assist & mobility work.'},
+  {id:10,cat:'fitness',name:'Anti-Slip EVA Yoga Mat',e:'🧘',img:'yoga-mat.jpg',price:22.99,old:49.99,badge:null,desc:'4mm EVA foam, anti-slip surface, lightweight & portable.'},
+  {id:11,cat:'fitness',name:'Speed Jump Rope',e:'🪢',img:'jump-rope.jpg',price:12.99,old:24.99,badge:'sale',desc:'Ball bearings, adjustable cable length, foam grip handles.'},
+  {id:12,cat:'fitness',name:'Deep Tissue Foam Roller',e:'🧴',img:'foam-roller.jpg',price:21.99,old:39.99,badge:'new',desc:'33cm textured EPP foam, ideal for muscle recovery & trigger point release.'},
+  {id:13,cat:'pets',name:'4L HD Camera Auto Pet Feeder (Dual Bowl)',e:'🐾',img:'pet-feeder.jpg',price:99.99,old:196.99,badge:'hot',desc:'HD camera, app remote feeding, dual bowl for 2 pets.',colors:['Black','White']},
+  {id:14,cat:'pets',name:'LED Light-Up Dog Collar (USB Rechargeable)',e:'🐶',img:'led-collar.jpg',price:13.99,old:27.99,badge:null,desc:'Adjustable, trimmable LED strip, USB rechargeable. Medium size.',colors:['Red','Green','Blue','Pink']},
+  {id:15,cat:'pets',name:'Electric Pet Clipper Grooming Kit (Full Set)',e:'✂️',img:'grooming-kit.jpg',price:44.99,old:79.99,badge:'sale',desc:'Clipper, trimmer, nail clippers, scissors, comb & brushes. For dogs — also works great for cats!'},
+  {id:16,cat:'pets',name:'Foldable Cat Tunnel Tube Toy',e:'🐱',img:'cat-tunnel.jpg',price:17.99,old:34.99,badge:'new',desc:'Interactive play tunnel, crinkle sound, washable, foldable for storage.'},
+  {id:17,cat:'electronics',name:'T&G TG117 Portable Bluetooth Speaker',e:'🔊',img:'bt-speaker.jpg',price:34.99,old:69.99,badge:'hot',desc:'1200mAh, 6-8hr playback, TF/USB/AUX, TWS pairing, waterproof.',colors:['Black','Red','Blue','Sky Blue','Camouflage','Blue/Yellow','Pattern']},
+  {id:18,cat:'electronics',name:'8-in-1 USB-C Hub',e:'🔌',img:'usb-hub.png',price:24.99,old:49.99,badge:null,desc:'4K@30Hz HDMI, PD 87W fast charge, USB 3.0+2.0, RJ45, SD/TF reader.'},
+  {id:19,cat:'electronics',name:'Adjustable Aluminum Laptop Stand',e:'💻',img:'laptop-stand.jpg',price:22.99,old:44.99,badge:'sale',desc:'6-level height, foldable, fits 8-16" laptops, ventilated.',colors:['Black','White']},
+  {id:20,cat:'electronics',name:'LED Selfie Ring Light Phone Clip',e:'💡',img:'ring-light.jpg',price:12.99,old:29.99,badge:'new',desc:'3-stop dimming, portable clip-on, fits most phones.',colors:['Pink','White','Blue','Black']},
+ {id:21,cat:'fashion',name:'Compression Packing Cube Set (5pcs)',e:'🧳',img:'packing-cubes.jpg',price:44.99,old:74.99,badge:'new',desc:'5-piece set (3L-15L), expandable mesh travel organizers, pack smarter & save space.',colors:['Black','Grey']},
+ {id:22,cat:'electronics',name:'Thinkplus Smart Touch Screen ANC Earbuds',e:'🎧',img:'earbuds-touchscreen.jpg',price:24.99,old:49.99,badge:'new',desc:'Full-color smart touch screen on charging case — ANC, battery %, clock. Color: black or white (random/seller\'s choice).'},
+];
+
+let cart=[];
+try{cart=JSON.parse(localStorage.getItem('nx_cart')||'[]');}catch(e){cart=[];}
+let aiOpen=false;
+let selectedColor={};
+
+window.onload=()=>{render('all');particles();updateCart();};
+
+// RENDER
+function render(cat,gridId='pg',list=null){
+  const g=document.getElementById(gridId);
+  const items=list||(cat==='all'?P:P.filter(p=>p.cat===cat));
+  if(!items.length){g.innerHTML='<p style="color:var(--muted);padding:30px;grid-column:1/-1;text-align:center">No products found.</p>';return;}
+  g.innerHTML=items.map(p=>`
+    <div class="pcard">
+      ${p.badge?`<span class="badge b-${p.badge}">${p.badge==='hot'?'🔥 HOT':p.badge==='new'?'✨ NEW':'💰 SALE'}</span>`:''}
+      <div class="pimg">${p.img?`<img src="${p.img}" style="width:100%;height:100%;object-fit:cover;border-radius:inherit">`:p.e}</div>
+      <div class="pbody">
+        <div class="pcat">${p.cat}</div>
+        <div class="pname">${p.name}</div>
+        <div class="pdesc" id="d${p.id}">${p.desc}</div>
+        ${p.colors?`<div class="cswatch" id="cs${p.id}">${p.colors.map((c,i)=>`<button class="ctag${i===0?' on':''}" data-c="${c}" onclick="pickColor(${p.id},'${c}',this)">${c}</button>`).join('')}</div>`:''}
+        <div class="pfoot">
+          <div><span class="pprice">$${p.price.toFixed(2)}</span> <span class="pold">$${p.old.toFixed(2)}</span></div>
+          <button class="addbtn" onclick="addCart(${p.id})">Add +</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+function pickColor(id,color,el){
+  selectedColor[id]=color;
+  el.parentElement.querySelectorAll('.ctag').forEach(b=>b.classList.remove('on'));
+  el.classList.add('on');
+}
+
+function setTab(cat,el){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  if(el)el.classList.add('on');
+  render(cat);
+  document.getElementById('srbox').classList.remove('on');
+}
+
+// SMART SEARCH (client-side, no API needed)
+function doSearch(){
+  const q=document.getElementById('sq').value.trim();
+  if(!q)return;
+  const box=document.getElementById('srbox');
+  const grid=document.getElementById('srgrid');
+  const head=document.getElementById('srhead');
+  box.classList.add('on');
+  box.scrollIntoView({behavior:'smooth'});
+  const kw=q.toLowerCase();
+  let maxPrice=Infinity;
+  const priceMatch=kw.match(/under\s*\$?(\d+)|below\s*\$?(\d+)|less than\s*\$?(\d+)/);
+  if(priceMatch)maxPrice=Number(priceMatch[1]||priceMatch[2]||priceMatch[3]);
+  const words=kw.replace(/under.*|below.*|less than.*/,'').split(/\s+/).filter(w=>w.length>2);
+  let res=P.filter(p=>{
+    if(p.price>maxPrice)return false;
+    const hay=(p.name+' '+p.cat+' '+p.desc).toLowerCase();
+    return words.some(w=>hay.includes(w))||hay.includes(kw);
+  });
+  if(!res.length)res=P.filter(p=>p.price<=maxPrice).slice(0,6);
+  render('all','srgrid',res.length?res:P.slice(0,6));
+  head.textContent='🔍 Results for: "'+q+'"';
+}
+
+// CART
+function addCart(id){
+  const p=P.find(x=>x.id===id);
+  const color=selectedColor[id]||(p.colors?p.colors[0]:null);
+  const ex=cart.find(x=>x.id===id&&x.color===color);
+  if(ex)ex.qty++;else cart.push({...p,qty:1,color});
+  saveCart();updateCart();showToast('✅ '+p.name+(color?' ('+color+')':'')+' added!');
+}
+function removeCart(id,color){cart=cart.filter(x=>!(x.id===id&&x.color===color));saveCart();updateCart();}
+function qChange(id,color,d){const i=cart.find(x=>x.id===id&&x.color===color);if(i){i.qty+=d;if(i.qty<=0)removeCart(id,color);}saveCart();updateCart();}
+function saveCart(){try{localStorage.setItem('nx_cart',JSON.stringify(cart));}catch(e){}}
+function updateCart(){
+  const count=cart.reduce((a,x)=>a+x.qty,0);
+  document.getElementById('cc').textContent=count;
+  const ci=document.getElementById('ci'),cf=document.getElementById('cf');
+  if(!cart.length){ci.innerHTML='<div class="cempty"><span class="big">🛒</span><p>Cart is empty</p></div>';cf.style.display='none';return;}
+  cf.style.display='block';
+  ci.innerHTML=cart.map(p=>`<div class="ci"><div class="ci-emoji">${p.e}</div><div class="ci-info"><div class="ci-name">${p.name}${p.color?` <span style="color:var(--muted);font-weight:500">— ${p.color}</span>`:''}</div><div class="ci-price">$${(p.price*p.qty).toFixed(2)}</div><div class="ci-qty"><button class="qbtn" onclick="qChange(${p.id},'${p.color||''}',-1)">−</button><span class="qnum">${p.qty}</span><button class="qbtn" onclick="qChange(${p.id},'${p.color||''}',1)">+</button></div></div><button class="rmbtn" onclick="removeCart(${p.id},'${p.color||''}')">🗑</button></div>`).join('');
+  document.getElementById('ctot').textContent='$'+cart.reduce((a,x)=>a+(x.price*x.qty),0).toFixed(2);
+}
+function toggleCart(){document.getElementById('ct').classList.toggle('on');document.getElementById('ov').classList.toggle('on');}
+
+// FAQ CHAT (client-side, no API needed)
+function toggleAI(){aiOpen=!aiOpen;document.getElementById('aip').classList.toggle('on',aiOpen);}
+function botReply(q){
+  const t=q.toLowerCase();
+  if(/why.*(nexmart|choose|shop|buy from|you)|what makes|reason to/.test(t))return "✨ We offer premium products at up to 57% off retail, worldwide shipping, a 30-day satisfaction guarantee, and real 24/7 support — all in one store.";
+  if(/\b(legit|scam|trust(worthy)?|is.*real|safe)\b/.test(t))return "✅ Yes, we're a real store — secure checkout, verified products, and responsive support at getnexmart@gmail.com if you ever have concerns.";
+  if(/ship|deliver|arrive|when.*get/.test(t))return "📦 We ship worldwide! Delivery typically takes 10-20 days depending on your location.";
+  if(/return|refund|exchange/.test(t))return "↩️ We offer a 30-day satisfaction guarantee — if something's wrong with your order, email us and we'll sort it out with a refund or replacement.";
+  if(/pay|payment|checkout|card/.test(t))return "💳 We support secure card payments and bank transfer at checkout.";
+  if(/contact|email|reach|whatsapp|phone/.test(t))return "📩 You can reach us at getnexmart@gmail.com — we usually reply within a few hours.";
+  if(/discount|sale|coupon|off/.test(t))return "🏷️ Check our homepage — most products are already discounted up to 57% off retail price!";
+  if(/\b(hi|hello|hey)\b/.test(t)&&t.split(/\s+/).length<=3)return "👋 Hey there! Ask me about shipping, returns, payments, or any product.";
+  // Find ALL products mentioned (not just the first match) to support comparisons
+  const matches=P.filter(p=>{
+    const nameWords=p.name.toLowerCase().split(/\s+/).filter(w=>w.length>3);
+    return nameWords.filter(w=>t.includes(w)).length>=2||nameWords.filter(w=>t.includes(w)).length===nameWords.length;
+  });
+  if(matches.length>=2){
+    const [a,b]=matches;
+    return `Comparing:\n📦 ${a.name} — $${a.price.toFixed(2)} (was $${a.old.toFixed(2)})\n📦 ${b.name} — $${b.price.toFixed(2)} (was $${b.old.toFixed(2)})\nBoth are solid picks — ${a.name} suits "${a.desc.split('.')[0]}", while ${b.name} is better if you want "${b.desc.split('.')[0]}". Check each product page for full specs!`;
+  }
+  const found=matches[0]||P.find(p=>{
+    const nameWords=p.name.toLowerCase().split(/\s+/).filter(w=>w.length>3);
+    const catWord=p.cat.toLowerCase();
+    return nameWords.some(w=>t.includes(w))||t.includes(catWord)||catWord.split(/\s+/).some(w=>w.length>3&&t.includes(w));
+  });
+  if(found)return `${found.name} is $${found.price.toFixed(2)} (was $${found.old.toFixed(2)}). ${found.desc}`;
+  // Broad sentiment catch-all (covers phrasing not explicitly matched above)
+  const positive=/\b(thanks|thank you|thx|appreciate|good|great|cool|nice|perfect|alright|awesome|love|amazing|excellent|sounds good|ok|okay|fine|sweet|lovely|wonderful)\b/;
+  const negative=/\b(bad|worse|terrible|awful|angry|annoyed|disappointed|frustrat|hate|worst|broken|not working|doesn'?t work|sucks|useless)\b/;
+  const question=/\?|^(what|how|when|where|why|can|is|are|do|does|will)\b/;
+  if(negative.test(t))return "😟 Sorry to hear that. Please email getnexmart@gmail.com with your order details and we'll get it sorted quickly.";
+  if(positive.test(t)&&!question.test(t))return "😊 Glad to hear it! Let me know if you need anything else.";
+  return "🤔 I'm not sure about that — try asking about shipping, returns, payments, or a specific product name. For anything else, email getnexmart@gmail.com.";
+}
+function sendMsg(){
+  const inp=document.getElementById('ainp');
+  const q=inp.value.trim();
+  if(!q)return;
+  inp.value='';
+  appendMsg(q,'user');
+  setTimeout(()=>appendMsg(botReply(q),'bot'),350);
+}
+function appendMsg(txt,cls){
+  const d=document.createElement('div');d.className='msg '+cls;d.textContent=txt;
+  const m=document.getElementById('ams');m.appendChild(d);m.scrollTop=m.scrollHeight;return d;
+}
+
+// (countdown removed — replaced with honest trust bar)
+
+// NEWSLETTER
+function subscribe(){
+  const e=document.getElementById('em').value.trim();
+  if(!e||!e.includes('@')){showToast('⚠️ Enter a valid email');return;}
+  document.getElementById('em').value='';showToast('🎉 Subscribed! Deals coming your way!');
+}
+
+// TOAST
+function showToast(msg){
+  const t=document.getElementById('toast');t.textContent=msg;t.classList.add('on');
+  setTimeout(()=>t.classList.remove('on'),3000);
+}
+
+// PARTICLES
+function particles(){
+  const c=document.getElementById('cv'),ctx=c.getContext('2d');
+  let W,H,pts=[];
+  function resize(){W=c.width=window.innerWidth;H=c.height=c.parentElement.offsetHeight;
+    pts=Array.from({length:60},()=>({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.35,vy:(Math.random()-.5)*.35,r:Math.random()*1.8+.4}));}
+  window.addEventListener('resize',resize);resize();
+  let mx=W/2,my=H/2;c.addEventListener('mousemove',e=>{mx=e.offsetX;my=e.offsetY;});
+  (function draw(){
+    ctx.clearRect(0,0,W,H);
+    pts.forEach(p=>{
+      p.x+=p.vx;p.y+=p.vy;
+      if(p.x<0||p.x>W)p.vx*=-1;if(p.y<0||p.y>H)p.vy*=-1;
+      ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle='rgba(0,200,255,.55)';ctx.fill();
+    });
+    for(let i=0;i<pts.length;i++)for(let j=i+1;j<pts.length;j++){
+      const dist=Math.hypot(pts[i].x-pts[j].x,pts[i].y-pts[j].y);
+      if(dist<110){ctx.beginPath();ctx.moveTo(pts[i].x,pts[i].y);ctx.lineTo(pts[j].x,pts[j].y);ctx.strokeStyle=`rgba(0,200,255,${.14*(1-dist/110)})`;ctx.lineWidth=.5;ctx.stroke();}
+    }
+    pts.forEach(p=>{
+      const d=Math.hypot(p.x-mx,p.y-my);
+      if(d<140){ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(mx,my);ctx.strokeStyle=`rgba(255,184,0,${.09*(1-d/140)})`;ctx.lineWidth=.4;ctx.stroke();}
+    });
+    requestAnimationFrame(draw);
+  })();
+}
+</script>
+</body>
+</html>
